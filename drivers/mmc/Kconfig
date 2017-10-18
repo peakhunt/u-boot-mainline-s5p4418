@@ -216,6 +216,18 @@ config MMC_SDHCI_ATMEL
 	  It is compliant with the SD Host Controller Standard V3.0
 	  specification.
 
+config MMC_SDHCI_S5P4418
+	bool "S5P4418 SDHCI controller support"
+	depends on ARCH_S5P4418
+	depends on DM_MMC && BLK && ARCH_S5P4418
+	depends on MMC_SDHCI
+	help
+	  This enables support for the Atmel SDHCI controller, which supports
+	  the embedded MultiMedia Card (e.MMC) Specification V4.51, the SD
+	  Memory Card Specification V3.0, and the SDIO V3.0 specification.
+	  It is compliant with the SD Host Controller Standard V3.0
+	  specification.
+
 config MMC_SDHCI_BCM2835
 	tristate "SDHCI support for the BCM2835 SD/MMC Controller"
 	depends on ARCH_BCM283X

@@ -1,0 +1,18 @@
+if ARCH_S5P4418
+
+choice
+  prompt "S5P4418 board select"
+  optional
+
+config TARGET_NANOPI2_FIRE
+  bool "Friendly ARM NANOPI2 Fire Board"
+  select SUPPORT_SPL
+
+endchoice
+
+config SYS_SOC
+  default "s5p4418"
+
+source "board/samsung/nanopi2-fire/Kconfig"
+
+endif

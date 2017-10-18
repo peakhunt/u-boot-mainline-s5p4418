@@ -388,6 +388,13 @@ config ATMEL_USART
 	  configured in the device tree, and input clock frequency can
 	  be got from the clk node.
 
+config S5P4418_SERIAL
+	bool "S5P4418 SERIAL support"
+	help
+	  Select this to enable USART support for S5P4418 SoC. It can be
+	  configured in the device tree, and input clock frequency can
+	  be got from the clk node.
+
 config BCM6345_SERIAL
 	bool "Support for BCM6345 UART"
 	depends on DM_SERIAL && ARCH_BMIPS

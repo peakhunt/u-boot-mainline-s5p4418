@@ -1,0 +1,12 @@
+if TARGET_NANOPI2_FIRE
+
+config SYS_BOARD
+  default "nanopi2-fire"
+
+config SYS_VENDOR
+  default "samsung"
+
+config SYS_CONFIG_NAME
+  default "nanopi2-fire"
+
+endif
