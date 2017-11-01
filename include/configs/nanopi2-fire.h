@@ -2,7 +2,7 @@
 #define __CONFIG_H
 
 #define CONFIG_SPL_TEXT_BASE    0xffff0000
-#define CONFIG_SPL_STACK        0xffff4000
+#define CONFIG_SPL_STACK        0xffff8000
 
 #define CONFIG_SPL_MAX_FOOTPRINT    0x3c00    /* 15K max */
 #define CONFIG_SPL_MAX_SIZE     0x3c00
@@ -36,6 +36,7 @@
 
 #define CONFIG_DEBUG_UART
 #define CONFIG_DEBUG_UART_PL011
+
 #define CONFIG_DEBUG_UART_BASE  0xc00a1000
 #define CONFIG_DEBUG_UART_CLOCK 50000000
 
