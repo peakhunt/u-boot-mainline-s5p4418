@@ -7,6 +7,7 @@ choice
 config TARGET_NANOPI2_FIRE
   bool "Friendly ARM NANOPI2 Fire Board"
   select SUPPORT_SPL
+  select BOARD_EARLY_INIT_F
 
 endchoice
 
