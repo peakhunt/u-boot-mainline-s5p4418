@@ -1,19 +1,29 @@
 #include <common.h>
 #include <asm/io.h>
 
+DECLARE_GLOBAL_DATA_PTR;
+
 int timer_init(void)
 {
-#if 0
-  at91_pit_t *pit = (at91_pit_t *)ATMEL_BASE_PIT;
+  // PCLK is 166 Mhz
+  // so using 166 prescaler, we can get 1 Mhz timer
+  writel(165, 0xc0017000);
 
-  /* Enable PITC Clock */
-  at91_periph_clk_enable(ATMEL_ID_PIT);
+  // TCNTB0 = 0xffffffff
+  writel(0xffffffff, 0xc001700c);
 
-  /* Enable PITC */
-  writel(TIMER_LOAD_VAL | AT91_PIT_MR_EN , &pit->mr);
+  // TCMPB0 = 0x0
+  writel(0x00, 0xc0017010);
 
-  gd->arch.timer_rate_hz = get_pit_clk_rate() / 16;
-#endif
+  // TCNTO0 will be read by system
+
+  // TCON. start timer in interval mode
+  writel(   (1 << 1), 0xc0017008);
+  writel(   (1 << 0)          |       // timer0 start
+            (1 << 3)                  // auto reload enable
+            , 0xc0017008);
+
+  gd->arch.timer_rate_hz = 1000 * 1000;
 
   return 0;
 }
@@ -23,14 +33,16 @@ int timer_init(void)
      */
 ulong get_tbclk(void)
 {
-  /*
   return gd->arch.timer_rate_hz;
-  */
-  return 0;
 }
 
 unsigned long
 timer_read_counter(void)
 {
-  return 0;
+  u32 l;
+
+  l = readl(0xc0017014);
+  l = 0xffffffff - l;
+
+  return l;
 }

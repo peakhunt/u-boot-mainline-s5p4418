@@ -1,4 +1,3 @@
-#define DEBUG 1
 #include <common.h>
 #include <asm/io.h>
 #include <spl.h>
@@ -8,85 +7,14 @@
 #include <asm/arch/s5p4418_syscon.h>
 #include <asm/arch/s5p4418_gpio.h>
 
-static inline void
-update_pll(s5p4418_syscon_t* reg, u8 pll_num)
-{
-  writel(S5P4418_UPDATE_PLL(pll_num), &reg->clkmodereg0);
-
-  while(readl(&reg->clkmodereg0) & S5P4418_WAIT_UPDATE_PLL)
-    ;
-}
-
-static void
-setup_pll_clock(void)
-{
-  //////////////////////////////////////////////////////////////////////////
-  //
-  // PLL0 : 1 GHz for f/h/b/p clk
-  // PLL1 : 800 Mhz for DDR3
-  // PLL2 :
-  // PLL3 :
-  //
-  // fclk : 1 Ghz
-  // hclk : 250 Mhz
-  // bclk : 333 Mhz
-  // pclk : 166
-  //
-  //////////////////////////////////////////////////////////////////////////
-  s5p4418_syscon_t*   reg;
-
-
-  reg = (s5p4418_syscon_t*)S5P4418_BASE_SYS_CON;
-
-  // PLL0, SDIV: 1, MDIV: 500, PDIV : 6
-  writel(S5P4418_PLL_SDIV(1)    |
-         S5P4418_PLL_MDIV(500)  |
-         S5P4418_PLL_PDIV(6)    |
-         S5P4418_PLL_OUTDIV(0)  |
-         S5P4418_PLL_BYPASS(1)  |
-         S5P4418_PLL_PD(0)      |
-         S5P4418_PLL_SSCG_EN(0),
-         &reg->pllsetreg0);
-
-  update_pll(reg, 0);
-
-  // setup f/h clk
-  writel(S5P4418_CLKSEL_FCLKCPU0(0)   |
-         S5P4418_CLKDIV_FCLKCPU0(0)   |
-         S5P4418_CLKDIV_HCLKCPU0(3),
-         &reg->clkdivreg0);
-
-  // setup b/p clk
-  writel(S5P4418_CLKSEL_BCLK(0)       |
-         S5P4418_CLKDIV_BCLK(2)       |
-         S5P4418_CLKDIV_PCLK(1),
-         &reg->clkdivreg1);
-
-  // PLL1 SDIV : 1, MDIV: 400, PDIV: 6
-  writel(S5P4418_PLL_SDIV(1)    |
-         S5P4418_PLL_MDIV(400)  |
-         S5P4418_PLL_PDIV(6)    |
-         S5P4418_PLL_OUTDIV(0)  |
-         S5P4418_PLL_BYPASS(1)  |
-         S5P4418_PLL_PD(0)      |
-         S5P4418_PLL_SSCG_EN(0),
-         &reg->pllsetreg1);
-
-  update_pll(reg, 1);
-
-  // PLL2
-  // FIXME
-  //
-
-  //
-  // PLL3
-  // FIXME
-}
+extern void s5p4418_ddr3_init(void);
+extern void mem_init(void);
+extern unsigned long timer_read_counter(void);
 
 void
 board_init_f(ulong dummy)
 {
-  setup_pll_clock();
+  s5p4418_board_pll_clk_init();
 
   //
   // perform entire IP peripheral reset
@@ -96,24 +24,70 @@ board_init_f(ulong dummy)
   s5p4418_ip_reset(2, 0xffffffff);
 
 	board_early_init_f();     // after this, you can call debug()
+  timer_init();
 
   debug("debug: board_init_f\n");
 
+  //s5p4418_board_memory_init();
+
+  //s5p4418_ddr3_init();    // test code
+  mem_init();
+
+  debug("debug: ddr3 init done\n");
+
+#if 0
+  debug("concontrol %x\n", readl(0xc00e0000));
+  debug("memcontrol %x\n", readl(0xc00e0004));
+  debug("memconfig  %x\n", readl(0xc00e0008));
+  debug("phycontrol %x\n", readl(0xc00e0018));
+  debug("phystatus  %x\n", readl(0xc00e0040));
+  debug("membase    %x\n", readl(0xc00e010c));
+  debug("PHY_CON0   %x\n", readl(0xc00e1000));
+  debug("PHY_CON12  %x\n", readl(0xc00e1030));
+  debug("PHY_CON14  %x\n", readl(0xc00e1038));
+#endif
+
 #if 1
   {
-    const u32 interval = 0x00ffffff;
     int cnt = 0;
     s5p4418_gpio_t*   gpiob = (s5p4418_gpio_t*)S5P4418_BASE_GPIO_B;
+    volatile u32*   ptr = (volatile u32*)(0x40000000);
+    unsigned long     prev;
+    u8    on_off = 0;
+    u32 cycle = 0;
 
+    // we have 1 GB memory
+
+    prev = timer_read_counter();
     while(1)
     {
-      for(u32 i = 0; i < interval; i++) { asm("nop"); }
-      s5p4418_gpio_set_output(gpiob, 12, 0);
-      for(u32 i = 0; i < interval; i++) { asm("nop"); }
-      s5p4418_gpio_set_output(gpiob, 12, 1);
+      if((timer_read_counter() - prev) >= 1000 * 100)
+      {
+        on_off = !on_off;
+        s5p4418_gpio_set_output(gpiob, 12, on_off);
+        prev = timer_read_counter();
+      }
 
-      debug("testing ...... %d\n", cnt);
+      //debug("testing ...... %d\n", cnt);
       cnt++;
+
+      *ptr = (u32)cnt;
+      if(*ptr != (u32)cnt)
+      {
+        while(1)
+        {
+          debug("ddr test failed %x, %x, %x\n", (u32)ptr, *ptr, cnt);
+        }
+      }
+      //debug("addr : %x\n", (u32)ptr);
+
+      ptr++;
+
+      if((u32)ptr >= (0x40000000U + 0x40000000U))
+      {
+        ptr = (volatile u32*)(0x40000000);
+        debug("cycle %d finished\n", cycle++);
+      }
     }
   }
 #endif

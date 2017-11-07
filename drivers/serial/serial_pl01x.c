@@ -402,12 +402,22 @@ static void _debug_uart_init(void)
 #endif
 }
 
+#if 0 // hkim
 static inline void _debug_uart_putc(int ch)
 {
 	struct pl01x_regs *regs = (struct pl01x_regs *)CONFIG_DEBUG_UART_BASE;
 
 	pl01x_putc(regs, ch);
 }
+#else
+static inline void _debug_uart_putc(int ch)
+{
+	struct pl01x_regs *regs = (struct pl01x_regs *)CONFIG_DEBUG_UART_BASE;
+
+  while(pl01x_putc(regs, ch) == -EAGAIN)
+    ;
+}
+#endif
 
 DEBUG_UART_FUNCS
 

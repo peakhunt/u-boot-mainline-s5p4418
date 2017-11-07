@@ -213,4 +213,13 @@ s5p4418_ip_reset(u8 ndx, u32 bits)
   writel(tmp, ptr);
 }
 
+static inline void
+s5p4418_update_pll(s5p4418_syscon_t* reg, u8 pll_num)
+{
+  writel(S5P4418_UPDATE_PLL(pll_num), &reg->clkmodereg0);
+
+  while(readl(&reg->clkmodereg0) & S5P4418_WAIT_UPDATE_PLL)
+    ;
+}
+
 #endif /* !_S5P4418_SYSCON_H */

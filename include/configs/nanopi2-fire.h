@@ -1,11 +1,16 @@
 #ifndef __CONFIG_H
 #define __CONFIG_H
 
+#ifdef CONFIG_SPL_BUILD
+#undef CONFIG_DM_MMC
+#undef CONFIG_CMD_MMC
+#endif
+
 #define CONFIG_SPL_TEXT_BASE    0xffff0000
 #define CONFIG_SPL_STACK        0xffff8000
 
-#define CONFIG_SPL_MAX_FOOTPRINT    0x3c00    /* 15K max */
-#define CONFIG_SPL_MAX_SIZE     0x3c00
+#define CONFIG_SPL_MAX_FOOTPRINT    0x4000    /* 16K max */
+#define CONFIG_SPL_MAX_SIZE         0x4000
 #define CONFIG_SPL_BSS_MAX_SIZE     0x400
 #define CONFIG_SPL_BSS_START_ADDR   0xffff6000
 
@@ -41,5 +46,6 @@
 #define CONFIG_PL01x_PORTS        { (void *)IO_ADDRESS(PHY_BASEADDR_UART0),   \
                       (void *)IO_ADDRESS(PHY_BASEADDR_UART1) }
 */
+/* #define CONFIG_SYS_TIMER_COUNTER        0xc0017014   */
 
 #endif /* !__CONFIG_H */
