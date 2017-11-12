@@ -14,6 +14,10 @@
 #define S5P4418_BASE_UART4_CLKENB             0xc006e000
 #define S5P4418_BASE_UART5_CLKENB             0xc0084000
 
+#define S5P4418_BASE_SDMMC0_CLKENB            0xc00c5000
+#define S5P4418_BASE_SDMMC1_CLKENB            0xc00cc000
+#define S5P4418_BASE_SDMMC2_CLKENB            0xc00cd000
+
 #define S5P4418_BASE_GPIO_A                   0xc001a000
 #define S5P4418_BASE_GPIO_B                   0xc001b000
 #define S5P4418_BASE_GPIO_C                   0xc001c000

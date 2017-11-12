@@ -29,8 +29,8 @@ int timer_init(void)
 }
 
 /*
-    * Return the number of timer ticks per second.
-     */
+ * Return the number of timer ticks per second.
+ */
 ulong get_tbclk(void)
 {
   return gd->arch.timer_rate_hz;

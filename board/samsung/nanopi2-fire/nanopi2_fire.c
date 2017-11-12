@@ -11,38 +11,40 @@
 #include <asm/arch/s5p4418_gpio.h>
 #include <asm/arch/s5p4418_clk_gen.h>
 
+#include <mmc.h>
+#include <dwmmc.h>
+
+#include <dm/platform_data/serial_pl01x.h>
+
+#ifndef CONFIG_SPL_BUILD
+
+#ifndef CONFIG_OF_CONTROL
+static const struct pl01x_serial_platdata serial_platdata = {
+  .base = 0xc00a1000,
+  .type = TYPE_PL011,
+  .clock = CONFIG_PL011_CLOCK,
+};
+
+U_BOOT_DEVICE(stv09911_serials) = {
+  .name = "serial_pl01x",
+  .platdata = &serial_platdata,
+};
+#endif
+
+#endif
+
 int board_init(void)
 {
-  /* Set Initial global variables */
-  /*
-  gd->bd->bi_arch_number = MACH_TYPE_GONI;
-  gd->bd->bi_boot_params = PHYS_SDRAM_1 + 0x100;
-  */
-
   return 0;
 }
 
 
 int dram_init(void)
 {
-  /*
-  gd->ram_size = PHYS_SDRAM_1_SIZE + PHYS_SDRAM_2_SIZE + PHYS_SDRAM_3_SIZE;
-  */
+  gd->ram_size = get_ram_size((void *)CONFIG_SYS_SDRAM_BASE,
+      CONFIG_SYS_SDRAM_SIZE);
   return 0;
 }
-
-#ifndef CONFIG_DM_SERIAL
-struct serial_device *default_serial_console(void)
-{
-#if 0
-  if (board_is_icev2())
-    return &eserial4_device;
-  else
-    return &eserial1_device;
-#endif
-  return NULL;
-}
-#endif
 
 #ifdef CONFIG_DEBUG_UART_BOARD_INIT
 void board_debug_uart_init(void)
@@ -95,9 +97,121 @@ setup_blue_led(void)
   s5p4418_gpio_set_io_mode(reg, 12, 1);
 
   // set B12 high to that LED goes off.
-  s5p4418_gpio_set_output(reg, 12, 0);
-
+  s5p4418_gpio_set_output(reg, 12, 1);
 }
+
+static void
+board_setup_mmc0(struct dwmci_host* host)
+{
+  //
+  // init MMC pin mux and clock
+  //
+  s5p4418_gpio_t*     gpiob   = (s5p4418_gpio_t*)S5P4418_BASE_GPIO_B;
+  s5p4418_gpio_t*     gpioa   = (s5p4418_gpio_t*)S5P4418_BASE_GPIO_A;
+  s5p4418_clk_gen_t*  clkgen  = (s5p4418_clk_gen_t*)S5P4418_BASE_SDMMC0_CLKENB;
+
+  // setup pin mux for SDMMC0
+  //
+  // SDDATA0_0        : AF1,      GPIOB1
+  // SDDATA0_1        : AF1,      GPIOB3
+  // SDDATA0_2        : AF1,      GPIOB5
+  // SDDATA0_3        : AF1,      GPIOB7
+  // SDCLK0           : AF1,      GPIOA29
+  // SDCMD0           : AF1,      GPIOA31
+  s5p4418_gpio_set_altfn(gpiob, 1, 1);
+  s5p4418_gpio_set_altfn(gpiob, 3, 1);
+  s5p4418_gpio_set_altfn(gpiob, 5, 1);
+  s5p4418_gpio_set_altfn(gpiob, 7, 1);
+
+  s5p4418_gpio_set_altfn(gpioa, 29, 1);
+  s5p4418_gpio_set_altfn(gpioa, 31, 1);
+
+  // setup clock for SDMMC
+  //
+  // for 50 Mhz SDMMC clock, we should provide
+  // 100 Mhz clock.
+  // use 1 Ghz PLL0 and clock divider 10
+  //
+  writel( S5P4418_SDMMC_OUTCLKINV0(0)       |
+          S5P4418_SDMMC_CKSRCSEL0(0)        |
+          S5P4418_SDMMC_CLKDIV0(4)          |
+          S5P4418_SDMMC_OUTCLKENB(0),
+          &clkgen->clkgen0l);
+  writel( S5P4418_SDMMC_CLKGEN_ENB(1)       |
+          (1 << 3),                         // undocumented. pclk enable!!!
+          &clkgen->clkenb);
+
+  //
+  // SDMMC CLKDIV and CLK_SOURCE are already set to 0 by
+  // reset default
+  //
+  writel(0x0, 0xc0062008);
+  writel(0x0, 0xc006200c);
+}
+
+static void dw_mci_clksel(struct dwmci_host* host)
+{
+  u32 val;
+
+  val = (0 << 0)      |     // shift
+    (0 << 16)     |     // drive clock
+    (3 << 24)     ;     // div ratio
+
+  dwmci_writel(host, 0x09c, val);
+}
+
+int
+board_mmc_init(bd_t *bis)
+{
+  static struct dwmci_host    host;
+  static struct mmc_config    cfg;
+  struct mmc*   mmc;
+
+  s5p4418_ip_reset(1, 1 << 7);    // doc error. SDMMC0 is bit 7
+
+  // MMC0 clock phase control
+  writel((0 << 0)     |       // drive clock delay
+         (0 << 8)     |       // delay sample
+         (2 << 16)    |       // phase shift drive
+         (1 << 24),           // phase shift
+         0xc0062114);
+
+  memset(&host, 0, sizeof(struct dwmci_host));
+  memset(&cfg, 0, sizeof(struct mmc_config));
+
+  host.name       = "";
+  host.ioaddr     = (void*)0xc0062000;
+  host.buswidth   = 4;
+  host.dev_index  = 0;
+  host.bus_hz     = 100000000;        // clock from PLL is running at 200 Mhz
+  host.clksel     = dw_mci_clksel;
+  host.board_init = board_setup_mmc0;
+  host.fifo_mode  = 1;
+
+  dwmci_setup_cfg(&cfg, &host, 50000000, 400000);
+
+  mmc = mmc_create(&cfg, &host);
+  host.mmc = find_mmc_device(0);
+
+  memcpy(host.mmc, mmc, sizeof(struct mmc));
+
+  debug("%x, %x, %x\n", (u32)&host, (u32)host.mmc, (u32)&cfg);
+  return 0;
+}
+
+#ifdef CONFIG_SPL_BUILD
+void
+board_boot_order(u32* spl_boot_list)
+{
+  spl_boot_list[0] =  BOOT_DEVICE_MMC1;
+}
+
+u32 spl_boot_mode(const u32 boot_device)
+{
+  return MMCSD_MODE_RAW;
+}
+#endif
+
 
 int board_early_init_f(void)
 {
@@ -106,6 +220,9 @@ int board_early_init_f(void)
 #ifdef CONFIG_DEBUG_UART
   debug_uart_init();
 #endif
+
+  debug("%s done\n", __func__);
+
   return 0;
 }
 #endif
@@ -113,7 +230,7 @@ int board_early_init_f(void)
 void
 s5p4418_board_pll_clk_init(void)
 {
-	//////////////////////////////////////////////////////////////////////////
+  //////////////////////////////////////////////////////////////////////////
   //
   // PLL0 : 1 GHz for f/h/b/p clk
   // PLL1 : 800 Mhz for md/m/mb/mp clk
@@ -230,5 +347,4 @@ s5p4418_board_memory_init(void)
   //
   // mem config 1
   // not used
-
 }

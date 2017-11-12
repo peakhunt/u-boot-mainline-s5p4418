@@ -1,3 +1,5 @@
+#ifdef CONFIG_SPL_BUILD
+
 /*
    totoally undocumented!
 */
@@ -12,7 +14,8 @@
 	.word 0x00000000      /* dummy sram vector */
 
   .word 0x00000200    /* header whatever: device read address */
-  .word 0x00040000    /* header whatever: load size */
+  /* .word 0x00040000    */ /* header whatever: load size */
+  .word 0x00008000    /* 32K load size */
   .word 0xffff0000    /* header whatever: load address */
   .word 0xffff0000    /* header whatever: launch address */
   .word 0x00000000    /* header whatever: boot from usb */
@@ -68,3 +71,5 @@
   .skip 336
   /* .word 0x44180600 */
   .word 0x4849534e
+
+#endif /* !CONFIG_SPL_BUILD */
