@@ -39,3 +39,5 @@ I still don't have correct information on this but it looks like loading 32K sho
 The incorrect information has affected my decision to disable DM/DTB in SPL to reduce SPL binary size.
 Anyway SPL boots up and works now so moving SPL to DM/DTB based code should be just a matter of time.
 I am working on this.
+
+
