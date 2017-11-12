@@ -33,6 +33,21 @@ Then u-boot main follows a normal start-up procedure and you get to command prom
 For now, there is no DM/DTB support in SPL. All the device initialization was done using some kind of dirty hack.
 And u-boot main doesn't get initialized properly. All you get is UART and command prompt.
 
+## Current Clock Setup
+The following is current clock setup I am using
+1. PLL0   1 GHz
+..-fclk   : 1 GHz FCLK
+..-hclk   : 250 Mhz HCLK
+..-bclk   : 333 Mhz BCLK
+..-pclk   : 166 Mhz BCLK
+2. PLL1   800 MHz for DDR3-1600
+..-mdclk  : 800 MHz
+..-mclk   : 800 MHz
+..-mbclk  : 400 MHz
+..-mpclk  : 200 MHz
+3. PLL2   : not used
+4. PLL3   : not used
+
 ## SPL size issue
 According to S5P4418 datasheet, the ROM boot code loads only 16 KB from MMC. According to my experiment, this turned out to be wrong.
 I still don't have correct information on this but it looks like loading 32K shouldn't be a problem.
