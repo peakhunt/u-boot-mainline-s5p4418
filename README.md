@@ -10,7 +10,7 @@ When I got it, I got hugely disappointed to find out that all the mainline suppo
 were stopped for S5P4418. Virtually the original chip maker named Nexcell(not sure spelling is connect but who cares?) 
 has given up on the chip. So here I go with this as another hobby project.
 
-I have no idea why they chose to give up on chip with simple design. Honestly I get to like this chip more and more as I dig deeper into it.
+I have no idea why they chose to give up on chip with simple design. Honestly I get to like the simplicity of the chip as I dig deeper into it.
 
 ## Difficulties
 As most people reading this already know, the datasheet sucks. There is no detailed description
