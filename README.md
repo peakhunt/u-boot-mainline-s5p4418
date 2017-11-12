@@ -21,12 +21,12 @@ To make things more complicated, there is no JTAG avaiable on nanopi2.
 
 ## Current status
 Currently
-a) SPL gets loaded into internal SRAM from MMC
-b) initializes clocks and DDR3
-c) initializes UART0 so you can debug
-d) initializes MMC0
-e) loads u-boot main into DDR3
-f) then boots up u-boot main
+1. SPL gets loaded into internal SRAM from MMC
+2. initializes clocks and DDR3
+3. initializes UART0 so you can debug
+4. initializes MMC0
+5. loads u-boot main into DDR3
+6. then boots up u-boot main
 
 Then u-boot main follows a normal start-up procedure and you get to command prompt.
 
@@ -34,7 +34,7 @@ For now, there is no DM/DTB support in SPL. All the device initialization was do
 And u-boot main doesn't get initialized properly. All you get is UART and command prompt.
 
 ## SPL size issue
-According to S5P4418 datasheet, the ROM boot code loads only 16 KB fro MMC. According to my experiment, this turned out to be wrong.
+According to S5P4418 datasheet, the ROM boot code loads only 16 KB from MMC. According to my experiment, this turned out to be wrong.
 I still don't have correct information on this but it looks like loading 32K shouldn't be a problem.
 The incorrect information has affected my decision to disable DM/DTB in SPL to reduce SPL binary size.
 Anyway SPL boots up and works now so moving SPL to DM/DTB based code should be just a matter of time.
