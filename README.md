@@ -55,4 +55,6 @@ The incorrect information has affected my decision to disable DM/DTB in SPL to r
 Anyway SPL boots up and works now so moving SPL to DM/DTB based code should be just a matter of time.
 I am working on this.
 
-
+## DDR3
+At the time of this writing, DDR3 initialization is fixed to DDR3-1600.
+More on generic DDR3 initialize routine will come later.
