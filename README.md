@@ -59,3 +59,20 @@ I am working on this.
 At the time of this writing, DDR3 initialization is fixed to DDR3-1600.
 
 Generic DDR3 initialize routine will come later.
+
+## build and install
+Currently it supports only nanopi2-fire board.
+
+To build,
+
+make nanopi2_fire_defconfig
+
+make CROSS_COMPILE=arm-linux-gnueabihf-  -j4
+
+To install,
+
+SD_DEVICE=/dev/sdc      # your SD card device
+
+dd if=spl/u-boot-spl.bin of=${SD_DEVICE} bs=512 seek=1
+
+dd if=-u-boot.img of=${SD_DEVICE} bs=512 seek=64
