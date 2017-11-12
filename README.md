@@ -17,7 +17,7 @@ As most people reading this already know, the datasheet sucks. There is no detai
 on the chip and furthermore information in the sheet is sometimes incorrect.
 To deal with this, I had to constantly refer to the so called BSP source code released by Nexcell in the old u-boot.
 
-To make things more complicated, there is no JTAG avaiable on nanopi2.
+To make matters worse, there is no JTAG avaiable on nanopi2. Hell yes it was fun to get to the first SPL debug output!
 
 ## Current status
 Currently
