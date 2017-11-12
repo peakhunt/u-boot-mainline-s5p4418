@@ -13,8 +13,8 @@ has given up on the chip. So here I go with this as another hobby project.
 I have no idea why they chose to give up on chip with simple design. Honestly I get to like the simplicity of the chip as I dig deeper into it.
 
 ## Difficulties
-As most people reading this already know, the datasheet sucks. There is no detailed description
-on the chip and furthermore information in the sheet is sometimes incorrect.
+As most people reading this already know, the datasheet sucks. It's quite vague with no detaile description on the chip
+and furthermore information in the sheet is often incorrect.
 To deal with this, I had to constantly refer to the so called BSP source code released by Nexcell in the old u-boot.
 
 To make matters worse, there is no JTAG avaiable on nanopi2. Hell yes it was fun to get to the first SPL debug output!
