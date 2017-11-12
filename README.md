@@ -57,4 +57,5 @@ I am working on this.
 
 ## DDR3
 At the time of this writing, DDR3 initialization is fixed to DDR3-1600.
-More on generic DDR3 initialize routine will come later.
+
+Generic DDR3 initialize routine will come later.
