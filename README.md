@@ -36,25 +36,15 @@ And u-boot main doesn't get initialized properly. All you get is UART and comman
 ## Current Clock Setup
 The following is current clock setup I am using
 1. PLL0   1 GHz
-
-  *fclk   : 1 GHz FCLK
-
-  *hclk   : 250 Mhz HCLK
-
-  *bclk   : 333 Mhz BCLK
-
-  *pclk   : 166 Mhz BCLK
-
+  * fclk   : 1 GHz FCLK
+  * hclk   : 250 Mhz HCLK
+  * bclk   : 333 Mhz BCLK
+  * pclk   : 166 Mhz BCLK
 2. PLL1   800 MHz for DDR3-1600
-
-  *mdclk  : 800 MHz
-
-  *mclk   : 800 MHz
-
-  *mbclk  : 400 MHz
-
-  *mpclk  : 200 MHz
-
+  * mdclk  : 800 MHz
+  * mclk   : 800 MHz
+  * mbclk  : 400 MHz
+  * mpclk  : 200 MHz
 3. PLL2   : not used
 4. PLL3   : not used
 
