@@ -16,6 +16,7 @@
 
 #include <dm/platform_data/serial_pl01x.h>
 
+#ifndef CONFIG_SPL_BUILD
 static const struct pl01x_serial_platdata serial_platdata = {
   .base = 0xc00a1000,
   .type = TYPE_PL011,
@@ -26,6 +27,7 @@ U_BOOT_DEVICE(s5p4418_serial) = {
   .name = "serial_pl01x",
   .platdata = &serial_platdata,
 };
+#endif
 
 /* dirty hack for now until DTB is implemented */
 struct s5p4418_dwmci_plat {
@@ -62,8 +64,7 @@ int dram_init(void)
   return 0;
 }
 
-#ifdef CONFIG_DEBUG_UART_BOARD_INIT
-void board_debug_uart_init(void)
+static void setup_uart0(void)
 {
   s5p4418_gpio_t*     gpiod   = (s5p4418_gpio_t*)S5P4418_BASE_GPIO_D;
   s5p4418_clk_gen_t*  clkgen  = (s5p4418_clk_gen_t*)S5P4418_BASE_UART0_CLKENB;
@@ -93,6 +94,12 @@ void board_debug_uart_init(void)
   writel( S5P4418_UART_CLKGEN_ENB(1),
           &clkgen->clkenb);
 
+}
+
+#ifdef CONFIG_DEBUG_UART_BOARD_INIT
+void board_debug_uart_init(void)
+{
+  setup_uart0();
 }
 #endif
 
@@ -195,6 +202,8 @@ int board_early_init_f(void)
 
 #ifdef CONFIG_DEBUG_UART
   debug_uart_init();
+#else
+  setup_uart0();
 #endif
 
   debug("%s done\n", __func__);
