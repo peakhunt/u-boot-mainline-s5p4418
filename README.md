@@ -61,7 +61,7 @@ The incorrect information has affected my decision to disable DM/DTB in SPL to r
 Anyway SPL boots up and works now so moving SPL to DM/DTB based code should be just a matter of time.
 I am working on this.
 
-According to my experiement, S5P4418 loads 29184 (hex 0x7200, 28.5KB) safely from MMC.
+According to my experiement, S5P4418 loads 29184 bytes (hex 0x7200, 28.5KB) safely from MMC.
 Currently the minimal SPL size I can achieve is 27076 bytes.
 
 
