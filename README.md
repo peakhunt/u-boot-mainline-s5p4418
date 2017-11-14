@@ -70,6 +70,8 @@ Currently the minimal SPL size I can achieve is 27076 bytes.
 At the moment of phase-2, Serial/MMC DM drivers are supported in SPL in a limited way.
 Future works will make them full-fledged DM drivers.
 
+Currently those drivers/devices are instantiated by U_BOOT_DEVICE() in code. DTB file is empty.
+
 ## DDR3
 At the time of this writing, DDR3 initialization is fixed to DDR3-1600.
 
