@@ -1,6 +1,12 @@
 # u-boot-mainline-s5p4418
 
-work in progress!!
+phase-2 work in progress!!
+adding DM/DTB supports for both SPL and Main.
+
+phase-2 : use DM/DTB frameworks
+          make DDR3 initialization generic.
+
+phase-1 : make it boot
 
 documentation will be added soon!
 
@@ -54,6 +60,15 @@ I still don't have correct information on this but it looks like loading 32K sho
 The incorrect information has affected my decision to disable DM/DTB in SPL to reduce SPL binary size.
 Anyway SPL boots up and works now so moving SPL to DM/DTB based code should be just a matter of time.
 I am working on this.
+
+According to my experiement, S5P4418 loads 29184 (hex 0x7200, 28.5KB) safely from MMC.
+Currently the minimal SPL size I can achieve is 27076 bytes.
+
+
+## DM Driver
+
+At the moment of phase-2, Serial/MMC DM drivers are supported in SPL in a limited way.
+Future works will make them full-fledged DM drivers.
 
 ## DDR3
 At the time of this writing, DDR3 initialization is fixed to DDR3-1600.
