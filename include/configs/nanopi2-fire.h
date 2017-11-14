@@ -1,19 +1,13 @@
 #ifndef __CONFIG_H
 #define __CONFIG_H
 
-#ifdef CONFIG_SPL_BUILD
-#undef CONFIG_DM_MMC
-#undef CONFIG_CMD_MMC
-
+#define CONFIG_DM_WARN          1
 #define CONFIG_BOUNCE_BUFFER    1
-#endif
 
 #define CONFIG_SPL_TEXT_BASE    0xffff0000
-#define CONFIG_SPL_STACK        0xffff8000
+#define CONFIG_SPL_STACK        0xffffffff
 
 #define CONFIG_SPL_MAX_SIZE         0x8000
-#define CONFIG_SPL_BSS_MAX_SIZE     0x400
-#define CONFIG_SPL_BSS_START_ADDR   0xffff6000
 
 #define CONFIG_SYS_LOAD_ADDR        0x42c00000
 #define CONFIG_SYS_TEXT_BASE        CONFIG_SYS_LOAD_ADDR
@@ -22,7 +16,7 @@
 #define CONFIG_SYS_SDRAM_BASE       0x40000000
 #define CONFIG_SYS_SDRAM_SIZE       0x40000000
 
-#define CONFIG_SYS_MALLOC_LEN       (32*1024*1024)
+#define CONFIG_SYS_MALLOC_LEN       (32*1024*1024)    /* 32 MB. big enough */
 
 /* nanopi2-fire has 2 banks of DRAM, but swap the bank */
 #define CONFIG_NR_DRAM_BANKS	2

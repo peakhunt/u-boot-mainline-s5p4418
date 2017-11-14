@@ -16,22 +16,38 @@
 
 #include <dm/platform_data/serial_pl01x.h>
 
-#ifndef CONFIG_SPL_BUILD
-
-#ifndef CONFIG_OF_CONTROL
 static const struct pl01x_serial_platdata serial_platdata = {
   .base = 0xc00a1000,
   .type = TYPE_PL011,
   .clock = CONFIG_PL011_CLOCK,
 };
 
-U_BOOT_DEVICE(stv09911_serials) = {
+U_BOOT_DEVICE(s5p4418_serial) = {
   .name = "serial_pl01x",
   .platdata = &serial_platdata,
 };
-#endif
 
-#endif
+/* dirty hack for now until DTB is implemented */
+struct s5p4418_dwmci_plat {
+  struct mmc_config   cfg;
+  struct mmc          mmc;
+
+  void*               base;
+  u8                  buswidth;
+  u8                  dev_index;
+};
+
+
+static const struct s5p4418_dwmci_plat  mmc0_platdata  = {
+  .base       = (void*)0xc0062000,
+  .buswidth   = 4,
+  .dev_index  = 0,
+};
+
+U_BOOT_DEVICE(s5p4418_mmc0) = {
+  .name = "s5p4418_dwmmc",
+  .platdata = &mmc0_platdata,
+};
 
 int board_init(void)
 {
@@ -80,29 +96,10 @@ void board_debug_uart_init(void)
 }
 #endif
 
-#ifdef CONFIG_BOARD_EARLY_INIT_F
-static inline void
-setup_blue_led(void)
+void
+s5p4418_dwmci_board_setup(struct dwmci_host* host)
 {
-  //
-  // setup blue LED
-  // GPIO-B12 is connected to LED
-  //
-  s5p4418_gpio_t*   reg = (s5p4418_gpio_t*)S5P4418_BASE_GPIO_B;
-
-  // b12, alt function 2
-  s5p4418_gpio_set_altfn(reg, 12, 2);
-
-  // setup B12 as output
-  s5p4418_gpio_set_io_mode(reg, 12, 1);
-
-  // set B12 high to that LED goes off.
-  s5p4418_gpio_set_output(reg, 12, 1);
-}
-
-static void
-board_setup_mmc0(struct dwmci_host* host)
-{
+  debug("%s\n", __func__);
   //
   // init MMC pin mux and clock
   //
@@ -126,6 +123,8 @@ board_setup_mmc0(struct dwmci_host* host)
   s5p4418_gpio_set_altfn(gpioa, 29, 1);
   s5p4418_gpio_set_altfn(gpioa, 31, 1);
 
+  s5p4418_ip_reset(1, 1 << 7);    // doc error. SDMMC0 is bit 7
+
   // setup clock for SDMMC
   //
   // for 50 Mhz SDMMC clock, we should provide
@@ -147,27 +146,6 @@ board_setup_mmc0(struct dwmci_host* host)
   //
   writel(0x0, 0xc0062008);
   writel(0x0, 0xc006200c);
-}
-
-static void dw_mci_clksel(struct dwmci_host* host)
-{
-  u32 val;
-
-  val = (0 << 0)      |     // shift
-    (0 << 16)     |     // drive clock
-    (3 << 24)     ;     // div ratio
-
-  dwmci_writel(host, 0x09c, val);
-}
-
-int
-board_mmc_init(bd_t *bis)
-{
-  static struct dwmci_host    host;
-  static struct mmc_config    cfg;
-  struct mmc*   mmc;
-
-  s5p4418_ip_reset(1, 1 << 7);    // doc error. SDMMC0 is bit 7
 
   // MMC0 clock phase control
   writel((0 << 0)     |       // drive clock delay
@@ -175,28 +153,6 @@ board_mmc_init(bd_t *bis)
          (2 << 16)    |       // phase shift drive
          (1 << 24),           // phase shift
          0xc0062114);
-
-  memset(&host, 0, sizeof(struct dwmci_host));
-  memset(&cfg, 0, sizeof(struct mmc_config));
-
-  host.name       = "";
-  host.ioaddr     = (void*)0xc0062000;
-  host.buswidth   = 4;
-  host.dev_index  = 0;
-  host.bus_hz     = 100000000;        // clock from PLL is running at 200 Mhz
-  host.clksel     = dw_mci_clksel;
-  host.board_init = board_setup_mmc0;
-  host.fifo_mode  = 1;
-
-  dwmci_setup_cfg(&cfg, &host, 50000000, 400000);
-
-  mmc = mmc_create(&cfg, &host);
-  host.mmc = find_mmc_device(0);
-
-  memcpy(host.mmc, mmc, sizeof(struct mmc));
-
-  debug("%x, %x, %x\n", (u32)&host, (u32)host.mmc, (u32)&cfg);
-  return 0;
 }
 
 #ifdef CONFIG_SPL_BUILD
@@ -212,6 +168,26 @@ u32 spl_boot_mode(const u32 boot_device)
 }
 #endif
 
+
+#ifdef CONFIG_BOARD_EARLY_INIT_F
+static inline void
+setup_blue_led(void)
+{
+  //
+  // setup blue LED
+  // GPIO-B12 is connected to LED
+  //
+  s5p4418_gpio_t*   reg = (s5p4418_gpio_t*)S5P4418_BASE_GPIO_B;
+
+  // b12, alt function 2
+  s5p4418_gpio_set_altfn(reg, 12, 2);
+
+  // setup B12 as output
+  s5p4418_gpio_set_io_mode(reg, 12, 1);
+
+  // set B12 high to that LED goes off.
+  s5p4418_gpio_set_output(reg, 12, 1);
+}
 
 int board_early_init_f(void)
 {

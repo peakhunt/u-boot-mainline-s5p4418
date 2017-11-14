@@ -9,7 +9,6 @@
 
 extern void s5p4418_ddr3_init(void);
 extern void mem_init(void);
-extern unsigned long timer_read_counter(void);
 
 void
 board_init_f(ulong dummy)
@@ -26,13 +25,17 @@ board_init_f(ulong dummy)
   board_early_init_f();     // after this, you can call debug()
   timer_init();
 
+  //
+  // looks like the max load size is 29184, which is 28.5KB
+  // quite funny
+  //
   debug("debug: board_init_f\n");
-
   //s5p4418_board_memory_init();
 
   mem_init();
 
   debug("debug: ddr3 init done\n");
+#if 0
 
   if(spl_init() != 0)
   {
@@ -43,4 +46,6 @@ board_init_f(ulong dummy)
   debug("spl_init() done: \n");
 
   preloader_console_init();
+#endif
+  //preloader_console_init();
 }

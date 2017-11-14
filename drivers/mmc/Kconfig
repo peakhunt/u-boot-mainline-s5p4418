@@ -407,6 +407,16 @@ config TEGRA124_MMC_DISABLE_EXT_LOOPBACK
 	  TODO(marcel.ziswiler@toradex.com): Move to device tree controlled
 	  approach once proper kernel integration made it mainline.
 
+config MMC_DW_S5P4418
+	bool "S5p4418 specific extensions for Synopsys DW Memory Card Interface"
+	depends on ARCH_S5P4418
+	depends on MMC_DW
+	default y
+	help
+	  This selects support for Samsung S5P4418 SoC specific extensions to the
+	  Synopsys DesignWare Memory Card Interface driver. Select this option
+	  for platforms based on S5P4418 SoC's.
+
 endmenu
 
 config SYS_FSL_ERRATUM_ESDHC111

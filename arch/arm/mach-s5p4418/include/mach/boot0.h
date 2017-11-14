@@ -45,6 +45,7 @@
   .word 0x4641880B    /*  0x0A4  /tWTR:4nCK  /tWR:6nCK /tRTP:4nCK */
   .word 0x32000334    /* /tFAW:12nCK /tXSR:512nCK  /tXP:3nCK /tCKE:3nCK */
 #else
+#if 1 /* XXX */
   .word 0x00000000    /* pll0 : 800 Mhz */
   .word 0x00000000    /* pll1 : 1200 Mhz */
   .word 0x00000000    /* pll2 : 550 Mhz */
@@ -67,9 +68,12 @@
   .word 0x00000000    /*  0x0A4  /tWTR:4nCK  /tWR:6nCK /tRTP:4nCK */
   .word 0x00000000    /* /tFAW:12nCK /tXSR:512nCK  /tXP:3nCK /tCKE:3nCK */
 #endif
+#endif
 
+#if 1 /* XXX */
   .skip 336
   /* .word 0x44180600 */
   .word 0x4849534e
+#endif
 
 #endif /* !CONFIG_SPL_BUILD */
