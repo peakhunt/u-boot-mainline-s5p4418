@@ -71,8 +71,9 @@ For this size reason, I chose not to use DM in SPL.
 
 ## DM Driver
 
-At the moment of phase-2, Serial/MMC DM drivers are supported in SPL in a limited way.
-Future works will make them full-fledged DM drivers.
+At the moment of phase-2, Serial/MMC DM drivers are supported in a limited way only in U-Boot Main.
+This port won't use DM/DTB in SPL due to SPL size restriction.
+Future works will make them full-fledged DM drivers only in U-Boot main.
 
 Currently those drivers/devices are instantiated by U_BOOT_DEVICE() in code. DTB file is empty.
 
