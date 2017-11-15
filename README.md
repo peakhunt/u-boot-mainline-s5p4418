@@ -1,10 +1,9 @@
 # u-boot-mainline-s5p4418
 
 phase-2 work in progress!!
-adding DM/DTB supports for both SPL and Main.
-
-phase-2 : use DM/DTB frameworks
+          make SPL as small as possible without using dirty hack
           make DDR3 initialization generic.
+          code cleanup
 
 phase-1 : make it boot
 
@@ -63,6 +62,11 @@ I am working on this.
 
 According to my experiement, S5P4418 loads 29184 bytes (hex 0x7200, 28.5KB) safely from MMC.
 Currently the minimal SPL size I can achieve with OF_CONTROL is 27380 bytes.
+
+With DM support in SPL, code size gets roughly 28KB. The minimum I could get was around 26KB with some dirty hacks.
+Without DM support and serial console in SPL, I could get roughly 19KB. With serial support, it is around 23KB.
+
+For this size reason, I chose not to use DM in SPL.
 
 
 ## DM Driver

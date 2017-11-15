@@ -16,6 +16,21 @@
 
 #include <dm/platform_data/serial_pl01x.h>
 
+struct s5p4418_dwmci_plat {
+  struct mmc_config   cfg;
+  struct mmc          mmc;
+
+  void*               base;
+  u8                  buswidth;
+  u8                  dev_index;
+};
+
+static const struct s5p4418_dwmci_plat  mmc0_platdata  = {
+  .base       = (void*)0xc0062000,
+  .buswidth   = 4,
+  .dev_index  = 0,
+};
+
 #ifndef CONFIG_SPL_BUILD
 static const struct pl01x_serial_platdata serial_platdata = {
   .base = 0xc00a1000,
@@ -27,29 +42,22 @@ U_BOOT_DEVICE(s5p4418_serial) = {
   .name = "serial_pl01x",
   .platdata = &serial_platdata,
 };
-#endif
-
-/* dirty hack for now until DTB is implemented */
-struct s5p4418_dwmci_plat {
-  struct mmc_config   cfg;
-  struct mmc          mmc;
-
-  void*               base;
-  u8                  buswidth;
-  u8                  dev_index;
-};
-
-
-static const struct s5p4418_dwmci_plat  mmc0_platdata  = {
-  .base       = (void*)0xc0062000,
-  .buswidth   = 4,
-  .dev_index  = 0,
-};
 
 U_BOOT_DEVICE(s5p4418_mmc0) = {
   .name = "s5p4418_dwmmc",
   .platdata = &mmc0_platdata,
 };
+#else
+void s5p4418_dwmmc_init(const struct s5p4418_dwmci_plat* plat, struct dwmci_host* host);
+static struct dwmci_host   dw_host;
+
+int
+board_mmc_init(bd_t *bis)
+{
+  s5p4418_dwmmc_init(&mmc0_platdata, &dw_host);
+  return 0;
+}
+#endif
 
 int board_init(void)
 {

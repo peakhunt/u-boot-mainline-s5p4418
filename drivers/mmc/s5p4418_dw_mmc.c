@@ -44,6 +44,7 @@ static void s5p4418_dwmci_clksel(struct dwmci_host* host)
 #endif
 }
 
+#if CONFIG_IS_ENABLED(DM_MMC)
 static int s5p4418_dwmmc_ofdata_to_platdata(struct udevice* dev)
 {
   /*DTB support is not yet implemented */
@@ -75,8 +76,6 @@ static int s5p4418_dwmmc_probe(struct udevice* dev)
   host->bus_hz      = 200000000;
 
   debug("%x, %d, %d\n", (u32)plat->base, plat->buswidth, host->bus_hz);
-
-  s5p4418_dwmmc_ofdata_to_platdata(dev);
 
   dwmci_setup_cfg(&plat->cfg, host, 50000000, 400000);
   host->mmc = &plat->mmc;
@@ -124,3 +123,24 @@ U_BOOT_DRIVER(s5p4418_dwmmc_drv) = {
 	.priv_auto_alloc_size     = sizeof(struct dwmci_s5p4418_priv_data),
 	.platdata_auto_alloc_size = sizeof(struct s5p4418_dwmci_plat),
 };
+
+#else
+
+void
+s5p4418_dwmmc_init(const struct s5p4418_dwmci_plat* plat, struct dwmci_host* host)
+{
+  host->name      = "s5p4418_mmc";
+
+  host->ioaddr      = plat->base;
+  host->buswidth    = plat->buswidth;
+  host->dev_index   = plat->dev_index;
+  host->clksel      = s5p4418_dwmci_clksel;
+  host->board_init  = s5p4418_dwmci_board_setup;
+
+  host->fifo_mode   = 1;    // FIXME
+  host->bus_hz      = 200000000;
+
+  dwmci_setup_cfg((struct mmc_config*)&plat->cfg, host, 50000000, 400000);
+  host->mmc = mmc_create(&plat->cfg, host);
+}
+#endif
