@@ -1,11 +1,13 @@
 # u-boot-mainline-s5p4418
 
 phase-2 : done
-          make SPL as small as possible without using dirty hack
-          decided not to use DM/DTB in SPL.
-          in SPL serial is disabled by default.
+
+  make SPL as small as possible without using dirty hack
+  decided not to use DM/DTB in SPL.
+  in SPL serial is disabled by default.
 
 phase-1 : done
+
   make it boot
 
 documentation will be added soon!
