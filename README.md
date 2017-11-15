@@ -1,11 +1,12 @@
 # u-boot-mainline-s5p4418
 
-phase-2 work in progress!!
+phase-2 : done
           make SPL as small as possible without using dirty hack
-          make DDR3 initialization generic.
-          code cleanup
+          decided not to use DM/DTB in SPL.
+          in SPL serial is disabled by default.
 
-phase-1 : make it boot
+phase-1 : done
+  make it boot
 
 documentation will be added soon!
 
