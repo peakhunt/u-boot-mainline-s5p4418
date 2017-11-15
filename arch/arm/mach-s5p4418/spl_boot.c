@@ -47,5 +47,4 @@ board_init_f(ulong dummy)
 
   preloader_console_init();
 #endif
-  //preloader_console_init();
 }

@@ -123,5 +123,4 @@ U_BOOT_DRIVER(s5p4418_dwmmc_drv) = {
 	.probe		                = s5p4418_dwmmc_probe,
 	.priv_auto_alloc_size     = sizeof(struct dwmci_s5p4418_priv_data),
 	.platdata_auto_alloc_size = sizeof(struct s5p4418_dwmci_plat),
-  .flags                    = DM_FLAG_PRE_RELOC,
 };
