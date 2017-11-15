@@ -41,8 +41,4 @@
 #define CONFIG_PL01x_PORTS    { (void*)0xc00a1000}
 #endif
 
-#ifdef CONFIG_SPL_BUILD
-#undef CONFIG_SPL_SERIAL_PRESENT
-#endif
-
 #endif /* !__CONFIG_H */
