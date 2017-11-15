@@ -15,15 +15,7 @@
 #include <dwmmc.h>
 
 #include <dm/platform_data/serial_pl01x.h>
-
-struct s5p4418_dwmci_plat {
-  struct mmc_config   cfg;
-  struct mmc          mmc;
-
-  void*               base;
-  u8                  buswidth;
-  u8                  dev_index;
-};
+#include <s5p4418_dw_mmc.h>
 
 static const struct s5p4418_dwmci_plat  mmc0_platdata  = {
   .base       = (void*)0xc0062000,
