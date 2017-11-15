@@ -62,7 +62,7 @@ Anyway SPL boots up and works now so moving SPL to DM/DTB based code should be j
 I am working on this.
 
 According to my experiement, S5P4418 loads 29184 bytes (hex 0x7200, 28.5KB) safely from MMC.
-Currently the minimal SPL size I can achieve is 27076 bytes.
+Currently the minimal SPL size I can achieve with OF_CONTROL is 27380 bytes.
 
 
 ## DM Driver
