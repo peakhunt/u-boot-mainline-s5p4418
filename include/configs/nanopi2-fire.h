@@ -33,11 +33,13 @@
 
 #define CONFIG_SPL_FRAMEWORK  
 
+#if !defined(CONFIG_SPL_BUILD) || defined(CONFIG_SPL_SERIAL_SUPPORT)
 #define CONFIG_CONS_INDEX   0
 #define CONFIG_PL01X_SERIAL
 #define CONFIG_PL011_SERIAL
 #define CONFIG_PL011_CLOCK    50000000
 #define CONFIG_PL01x_PORTS    { (void*)0xc00a1000}
+#endif
 
 #ifdef CONFIG_SPL_BUILD
 #undef CONFIG_DM_MMC        /* too many bugs not using CONFIG_IS_ENABLED */

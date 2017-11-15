@@ -5,16 +5,9 @@
 #include <errno.h>
 #include <linux/err.h>
 
+#include <s5p4418_dw_mmc.h>
+
 DECLARE_GLOBAL_DATA_PTR;
-
-struct s5p4418_dwmci_plat {
-  struct mmc_config   cfg;
-  struct mmc          mmc;
-
-  void*               base;
-  u8                  buswidth;
-  u8                  dev_index;
-};
 
 struct dwmci_s5p4418_priv_data {
   struct dwmci_host   host;
