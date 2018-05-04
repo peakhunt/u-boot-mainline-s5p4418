@@ -16,7 +16,7 @@ documentation will be added soon!
 ## why am I doing this?
 A few months ago, I bought a chinese board called nanopi2-fire.
 When I got it, I got hugely disappointed to find out that all the mainline supports
-were stopped for S5P4418. Virtually the original chip maker named Nexcell(not sure spelling is connect but who cares?) 
+were stopped for S5P4418. Virtually the original chip maker named Nexcell(not sure spelling is correct but who cares?) 
 has given up on the chip. So here I go with this as another hobby project.
 
 I have no idea why they chose to give up on chip with simple design. Honestly I get to like the simplicity of the chip as I dig deeper into it.
